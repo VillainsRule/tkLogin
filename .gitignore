@@ -1,0 +1,10 @@
+# modules
+node_modules
+bun.lock
+
+# generated
+dist
+.wrangler
+
+# mac conf
+.DS_Store

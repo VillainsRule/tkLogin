@@ -1,0 +1,11 @@
+{
+    "version": 1,
+    "include": [
+        "/*"
+    ],
+    "exclude": [
+        "/y/*",
+        "/robots.txt",
+        "/sitemap.xml"
+    ]
+}
