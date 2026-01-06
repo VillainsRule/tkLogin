@@ -167,7 +167,7 @@ export default function App() {
                                 >
                                     <div className='absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity' />
                                     <h3 className='text-xl font-bold mb-2'>Modern</h3>
-                                    <div className='inline-flex items-center gap-2 text-sm font-medium text-muted-foreground'>1.20.5 and up (POJAV KIDS CLICK HERE)</div>
+                                    <div className='inline-flex items-center gap-2 text-sm font-medium text-muted-foreground'>1.20.5-{MODERN_SUBVERSIONS[0]}</div>
                                 </button>
 
                                 <button
@@ -198,7 +198,7 @@ export default function App() {
                                             className='group relative overflow-hidden rounded-lg border-2 border-border hover:border-primary p-6 text-center transition-all hover:scale-105'
                                         >
                                             <div className='absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity' />
-                                            <div className='text-lg font-bold'>{subversion} {i == 0 && '(POJAV KIDS CLICK HERE)'}</div>
+                                            <div className='text-lg font-bold'>{subversion} {i == 0 && '(latest)'}</div>
                                         </button>
                                     ))}
                                 </div>
@@ -221,7 +221,6 @@ export default function App() {
                                     <h2 className='text-2xl font-bold mb-2'>{getVersion()} Download Started!</h2>
                                     <p className='text-muted-foreground text-sm'>If it does not start automatically, you can <span className='underline' onClick={() => {
                                         handleDownload(getVersion(), true);
-
                                     }}>redownload it</span>.</p>
                                 </div>
 
@@ -238,8 +237,7 @@ export default function App() {
                                             className='gap-2 bg-transparent mb-0 text-xl font-bold'
                                         >
                                             {launcher.includes('Pojav') ? 'POJAV LAUNCHER (POJAV USERS CLICK)' : launcher + ' Tutorial'}
-                                        </Button>
-                                        )
+                                        </Button>)
                                     })}</div>}
 
                                     <Dialog open={tutorialOpen} onOpenChange={setTutorialOpen}>
@@ -255,6 +253,7 @@ export default function App() {
                                                 <DialogTitle>Installation Tutorial</DialogTitle>
                                                 <DialogDescription>Choose your launcher for specific instructions</DialogDescription>
                                             </DialogHeader>
+
                                             {!selectedLauncher ? (
                                                 <div className='space-y-2 py-4'>
                                                     {LAUNCHERS.map((launcher) => (
