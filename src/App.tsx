@@ -6,12 +6,12 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 
 import { Code, Download, ExternalLink, FileText, Shield } from 'lucide-react'
 
+import getLanguage from './translations/getLanguage'
+
 import './styles.css';
 
 type Step = 'version' | 'subversion' | 'download'
 type Version = 'modern' | 'legacy' | null
-
-const LAUNCHERS = ['Normal Launcher', 'Prism / Poly / MultiMC', 'Pojav Launcher']
 
 const LEGACY = { repo: 'VillainsRule/1.8TokenLogin', branch: 'main', buildFile: 'SchubiAuth.jar' };
 const V1_20_5_TO_1_21_5 = { repo: 'VillainsRule/1.21TokenLogin', branch: '1.21.5', buildFile: 'TokenLogin.jar' };
@@ -42,31 +42,22 @@ const MODERN_SUBVERSIONS = [
     '1.21.11'
 ].reverse()
 
-const tutorialSteps: Record<typeof LAUNCHERS[number], (string | ReactNode)[]> = {
-    'Normal Launcher': [
-        <span className='underline' onClick={() => window.open('https://docs.fabricmc.net/players/installing-fabric')}>Install Fabric</span>,
-        <span className='underline' onClick={() => window.open('https://docs.fabricmc.net/players/installing-mods')}>Follow these instructions to add tkLogin</span>
-    ],
-    'Prism / Poly / MultiMC': [
-        'Open Prism Launcher / PolyMC / MultiMC',
-        'Click "Add Instance"',
-        'Select Fabric mod loader with any supported version',
-        'Create the instance',
-        'Click "Edit" and select "Mods"',
-        'Go to "View Folder" (bottom right) and put the mod in that folder'
-    ],
-    'Pojav Launcher': [
-        'Open the Pojav Launcher Version Selector',
-        'Click on the "Create new profile" button in the version selector.',
-        `Select Fabric and ${MODERN_SUBVERSIONS[0]} as the version.`,
-        'In the PojavLauncher menu, you will see "game directory" button, click it.',
-        'You will be automatically redirected to .minecraft folder.',
-        'Inside you will find the mods folder.',
-        'Put the mod you downloaded in there.'
-    ]
-}
+export default function App({ language }: { language: string }) {
+    const lang = getLanguage(language);
 
-export default function App() {
+    const tutorialSteps: Record<typeof LAUNCHERS[number], (string | ReactNode)[]> = {
+        [lang.NORMAL_LAUNCHER]: lang.TUTORIALS.NORMAL.map((loc, i) => {
+            if (i == 0) return <span className='underline' onClick={() => window.open('https://docs.fabricmc.net/players/installing-fabric')}>{loc}</span>
+            if (i == 1) return <span className='underline' onClick={() => window.open('https://docs.fabricmc.net/players/installing-mods')}>{loc}</span>
+
+            return loc;
+        }),
+        [lang.PRISM_LAUNCHER]: lang.TUTORIALS.PRISM,
+        [lang.POJAV_LAUNCHER]: lang.TUTORIALS.POJAV,
+    }
+
+    const LAUNCHERS = [lang.NORMAL_LAUNCHER, lang.PRISM_LAUNCHER, lang.POJAV_LAUNCHER];
+
     const [step, setStep] = useState<Step>('version')
     const [selectedVersion, setSelectedVersion] = useState<Version>(null)
     const [selectedSubversion, setSelectedSubversion] = useState<string>('')
@@ -117,23 +108,24 @@ export default function App() {
                     <div className='flex items-center justify-between'>
                         <div>
                             <h1 className='text-3xl font-bold text-foreground'>tkLogin</h1>
-                            <p className='text-muted-foreground mt-1'>login into Minecraft with accesstokens. it's easy!</p>
+                            <p className='text-muted-foreground mt-1'>{lang.SLOGAN}</p>
                         </div>
 
                         {isMounted && <Dialog open={safetyOpen} onOpenChange={setSafetyOpen}>
                             <DialogTrigger asChild>
                                 <Button variant='outline' className='gap-2 bg-transparent'>
                                     <Shield className='h-4 w-4' />
-                                    How do I know it's safe?
+                                    {lang.SAFETY_BUTTON_LABEL}
                                 </Button>
                             </DialogTrigger>
                             <DialogContent>
                                 <DialogHeader>
-                                    <DialogTitle>How do I know tkLogin is safe?</DialogTitle>
-                                    <DialogDescription>tkLogin is built using Github Actions.</DialogDescription>
+                                    <DialogTitle>{lang.SAFETY_DIALOG_TITLE}</DialogTitle>
+                                    <DialogDescription>{lang.SAFETY_DIALOG_DESCRIPTION}</DialogDescription>
                                 </DialogHeader>
+
                                 <div className='space-y-4'>
-                                    <p className='text-sm text-muted-foreground'>Github Actions is a platform that runs scripts on Github's servers. Actions exposes everything about the jar file, including the code and the script that builds it. nightly.link is a trusted website that lets normal users access these builds without being signed into GitHub. If you're a programmer, you can click 'view build' and then 'view run' at the bottom of the mod download section to review the build workflow.</p>
+                                    <p className='text-sm text-muted-foreground'>{lang.SAFETY_DIALOG_CONTENT}</p>
                                 </div>
                             </DialogContent>
                         </Dialog>}
@@ -151,14 +143,14 @@ export default function App() {
 
                     {step === 'version' && (
                         <Card className='p-8 gap-3'>
-                            <h2 className='text-2xl font-bold text-center'>Select Your Minecraft Version</h2>
+                            <h2 className='text-2xl font-bold text-center'>{lang.SELECT_VERSION_TITLE}</h2>
                             <button className='group relative overflow-hidden rounded-lg border-2 border-border hover:border-primary px-8 py-4 transition-all hover:scale-105 text-red-500 text-2xl font-bold' onClick={() => {
                                 handleVersionSelect('modern');
                                 setSelectedSubversion(MODERN_SUBVERSIONS[0]);
                                 setIsKid(true);
                                 setStep('download');
                                 handleDownload(MODERN_SUBVERSIONS[0]);
-                            }}>I am confused or I use Pojav Launcher (CLICK THIS)</button>
+                            }}>{lang.I_AM_CONFUSED_BUTTON}</button>
 
                             <div className='grid md:grid-cols-2 gap-4'>
                                 <button
@@ -166,7 +158,7 @@ export default function App() {
                                     className='group relative overflow-hidden rounded-lg border-2 border-border hover:border-primary p-8 text-left transition-all hover:scale-105'
                                 >
                                     <div className='absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity' />
-                                    <h3 className='text-xl font-bold mb-2'>Modern</h3>
+                                    <h3 className='text-xl font-bold mb-2'>{lang.MODERN_VERSION_BUTTON}</h3>
                                     <div className='inline-flex items-center gap-2 text-sm font-medium text-muted-foreground'>1.20.5-{MODERN_SUBVERSIONS[0]}</div>
                                 </button>
 
@@ -175,7 +167,7 @@ export default function App() {
                                     className='group relative overflow-hidden rounded-lg border-2 border-border hover:border-primary p-8 text-left transition-all hover:scale-105'
                                 >
                                     <div className='absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity' />
-                                    <h3 className='text-xl font-bold mb-2'>Legacy</h3>
+                                    <h3 className='text-xl font-bold mb-2'>{lang.LEGACY_VERSION_BUTTON}</h3>
                                     <div className='inline-flex items-center gap-2 text-sm font-medium text-muted-foreground'>1.8.9</div>
                                 </button>
                             </div>
@@ -184,7 +176,7 @@ export default function App() {
 
                     {step === 'subversion' && (
                         <Card className='p-8'>
-                            <h2 className='text-2xl font-bold mb-6 text-center'>Select Your 1.21 Version</h2>
+                            <h2 className='text-2xl font-bold mb-6 text-center'>{lang.SUBVERSION_SELECT_TITLE}</h2>
                             <div className='space-y-4'>
                                 <div className='grid grid-cols-2 sm:grid-cols-3 gap-3'>
                                     {MODERN_SUBVERSIONS.map((subversion, i) => (
@@ -203,9 +195,7 @@ export default function App() {
                                     ))}
                                 </div>
 
-                                <p className='text-sm text-muted-foreground text-center mt-4'>
-                                    Choose the version that matches your Minecraft installation
-                                </p>
+                                <p className='text-sm text-muted-foreground text-center mt-4'>{lang.SUBVERSION_SELECT_DESCRIPTION}</p>
                             </div>
                         </Card>
                     )}
@@ -218,25 +208,27 @@ export default function App() {
                                 </div>}
 
                                 <div>
-                                    <h2 className='text-2xl font-bold mb-2'>{getVersion()} Download Started!</h2>
-                                    <p className='text-muted-foreground text-sm'>If it does not start automatically, you can <span className='underline' onClick={() => {
-                                        handleDownload(getVersion(), true);
-                                    }}>redownload it</span>.</p>
+                                    <h2 className='text-2xl font-bold mb-2'>{lang.DOWNLOAD_STARTED.replace('{{VERSION}}', getVersion())}</h2>
+                                    <p className='text-muted-foreground text-sm'>
+                                        {lang.REDOWNLOAD_PROMPT_TEXT.split('{LINK}')[0]}
+                                        <span
+                                            className='underline'
+                                            style={{ cursor: 'pointer' }}
+                                            onClick={() => handleDownload(getVersion(), true)}
+                                        >
+                                            {lang.REDOWNLOAD_LINK_LABEL || 'redownload it'}
+                                        </span>
+                                        {lang.REDOWNLOAD_PROMPT_TEXT.split('{LINK}')[1]}
+                                    </p>
                                 </div>
 
                                 {isMounted && selectedVersion === 'modern' && <>
                                     {isKid && <div className='flex flex-wrap gap-3 justify-center'>{LAUNCHERS.map((launcher) => {
-                                        return (<Button
-                                            key={launcher}
-                                            onClick={() => {
-                                                setTutorialOpen(true);
-                                                setSelectedLauncher('');
-                                            }}
-                                            variant='outline'
-                                            size='lg'
-                                            className='gap-2 bg-transparent mb-0 text-xl font-bold text-red-500'
-                                        >
-                                            {launcher.includes('Pojav') ? 'POJAV LAUNCHER (POJAV USERS CLICK)' : 'Tutorial for ' + launcher.replace('Normal', 'Minecraft')}
+                                        return (<Button key={launcher} onClick={() => {
+                                            setTutorialOpen(true);
+                                            setSelectedLauncher('');
+                                        }} variant='outline' size='lg' className='gap-2 bg-transparent mb-0 text-xl font-bold text-red-500'>
+                                            {launcher == lang.POJAV_LAUNCHER ? lang.POJAV_KID_CTA : lang.TUTORIAL_FOR_LAUNCHER.replace('{{LAUNCHER}}', launcher)}
                                         </Button>)
                                     })}</div>}
 
@@ -244,14 +236,14 @@ export default function App() {
                                         {!isKid && <DialogTrigger asChild>
                                             <Button variant='outline' size='lg' className='gap-2 bg-transparent mb-0 text-xl'>
                                                 <FileText className='h-4 w-4' />
-                                                Installation Tutorial
+                                                {lang.INSTALL_TUTORIAL_POPUP_TITLE}
                                             </Button>
                                         </DialogTrigger>}
 
                                         <DialogContent>
                                             <DialogHeader>
-                                                <DialogTitle>Installation Tutorial</DialogTitle>
-                                                <DialogDescription>Choose your launcher for specific instructions</DialogDescription>
+                                                <DialogTitle>{lang.INSTALL_TUTORIAL_POPUP_TITLE}</DialogTitle>
+                                                <DialogDescription>{lang.INSTALL_TUTORIAL_POPUP_DESCRIPTION}</DialogDescription>
                                             </DialogHeader>
 
                                             {!selectedLauncher ? (
@@ -261,21 +253,21 @@ export default function App() {
                                                             key={launcher}
                                                             onClick={() => setSelectedLauncher(launcher)}
                                                             variant='outline'
-                                                            className={`w-full justify-start ${launcher.includes('Pojav') ? 'font-bold text-lg' : ''}`}
+                                                            className={`w-full justify-start ${launcher == lang.POJAV_LAUNCHER ? 'font-bold text-lg' : ''}`}
                                                         >
-                                                            {launcher.includes('Pojav') ? 'POJAV LAUNCHER (POJAV USERS CLICK HERE)' : launcher}
+                                                            {launcher == lang.POJAV_LAUNCHER ? lang.POJAV_KID_CTA : launcher}
                                                         </Button>
                                                     ))}
                                                 </div>
                                             ) : (
                                                 <div className='space-y-4 py-4'>
-                                                    <h3 className='font-semibold'>Installing on {selectedLauncher}</h3>
+                                                    <h3 className='font-semibold'>{lang.INSTALL_TUTORIAL_INSTALLINGON.replace('{{LAUNCHER}}', selectedLauncher)}</h3>
+
                                                     <ol className='list-decimal list-inside space-y-2 text-sm'>{tutorialSteps[selectedLauncher].map((step, index) => (
                                                         <li key={index}>{step}</li>
                                                     ))}</ol>
-                                                    <Button onClick={() => setSelectedLauncher('')} variant='outline'>
-                                                        Back to launcher list
-                                                    </Button>
+
+                                                    <Button onClick={() => setSelectedLauncher('')} variant='outline'>{lang.INSTALL_TUTORIAL_BACKTOLIST}</Button>
                                                 </div>
                                             )}
                                         </DialogContent>
@@ -290,7 +282,7 @@ export default function App() {
                                         window.open(nightlyLink, '_blank');
                                     }} variant='outline' className='gap-2 bg-transparent'>
                                         <ExternalLink className='h-4 w-4' />
-                                        View Build
+                                        {lang.VIEW_BUILD_BUTTON}
                                     </Button>
 
                                     <Button onClick={() => {
@@ -300,7 +292,7 @@ export default function App() {
                                         window.open(nightlyLink, '_blank');
                                     }} variant='outline' className='gap-2 bg-transparent'>
                                         <Code className='h-4 w-4' />
-                                        View Github
+                                        {lang.VIEW_GITHUB_BUTTON}
                                     </Button>
                                 </div>}
 
@@ -308,14 +300,12 @@ export default function App() {
                                     setStep('version')
                                     setSelectedVersion(null)
                                     setSelectedSubversion('')
-                                }} variant='ghost'>Start Over</Button>}
+                                }} variant='ghost'>{lang.START_OVER_BUTTON}</Button>}
                             </div>
                         </Card>
                     )}
 
-                    <div className='text-center text-sm text-muted-foreground'>
-                        tkLogin allows you to log in to Minecraft servers using access tokens. it's the easiest and most accessible (free) method.
-                    </div>
+                    <div className='text-center text-sm text-muted-foreground'>{lang.SITE_DESCRIPTION}</div>
                 </div>
             </main>
         </div>

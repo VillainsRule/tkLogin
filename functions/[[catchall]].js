@@ -33,7 +33,12 @@ const templateHtml = `<!doctype html>
 </html>`;
 
 export function renderHTML(renderFn, request, manualTemplate) {
-    const rendered = renderFn(new URL(request.url).pathname);
+    const languageHeader = request.headers.get('Accept-Language');
+    const language = languageHeader ? languageHeader.split(',')[0].split('-')[0] : 'en';
+
+    const pathname = new URL(request.url).pathname;
+
+    const rendered = renderFn(pathname, language);
 
     const html = (manualTemplate || templateHtml)
         .split('\n').map(line => line.trim()).join('')
