@@ -152,13 +152,13 @@ export default function App() {
                     {step === 'version' && (
                         <Card className='p-8 gap-3'>
                             <h2 className='text-2xl font-bold text-center'>Select Your Minecraft Version</h2>
-                            <button className='group relative overflow-hidden rounded-lg border-2 border-border hover:border-primary px-8 py-4 transition-all hover:scale-105' onClick={() => {
+                            <button className='group relative overflow-hidden rounded-lg border-2 border-border hover:border-primary px-8 py-4 transition-all hover:scale-105 text-red-500 text-2xl font-bold' onClick={() => {
                                 handleVersionSelect('modern');
                                 setSelectedSubversion(MODERN_SUBVERSIONS[0]);
                                 setIsKid(true);
                                 setStep('download');
                                 handleDownload(MODERN_SUBVERSIONS[0]);
-                            }}>I don't know what I'm doing OR I use Pojav Launcher</button>
+                            }}>I am confused or I use Pojav Launcher (CLICK THIS)</button>
 
                             <div className='grid md:grid-cols-2 gap-4'>
                                 <button
@@ -234,9 +234,9 @@ export default function App() {
                                             }}
                                             variant='outline'
                                             size='lg'
-                                            className='gap-2 bg-transparent mb-0 text-xl font-bold'
+                                            className='gap-2 bg-transparent mb-0 text-xl font-bold text-red-500'
                                         >
-                                            {launcher.includes('Pojav') ? 'POJAV LAUNCHER (POJAV USERS CLICK)' : launcher + ' Tutorial'}
+                                            {launcher.includes('Pojav') ? 'POJAV LAUNCHER (POJAV USERS CLICK)' : 'Tutorial for ' + launcher.replace('Normal', 'Minecraft')}
                                         </Button>)
                                     })}</div>}
 
