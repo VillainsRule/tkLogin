@@ -21,7 +21,7 @@ const en: Translation = {
     SUBVERSION_SELECT_DESCRIPTION: 'Choose the version that matches your Minecraft installation',
 
     DOWNLOAD_STARTED: '{{VERSION}} Download Started!',
-    REDOWNLOAD_PROMPT_TEXT: 'If it does not start automatically, you can {LINK}.',
+    REDOWNLOAD_PROMPT_TEXT: 'It may take a moment to start. If it does not download in a few seconds, you can {LINK}.',
     REDOWNLOAD_LINK_LABEL: 'redownload it',
     TUTORIAL_FOR_LAUNCHER: 'Tutorial for {{LAUNCHER}}',
 

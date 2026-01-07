@@ -31,9 +31,8 @@
         "@types/react": "^19.2.7",
         "@types/react-dom": "^19.2.3",
         "@vitejs/plugin-react": "^5.1.2",
-        "turnstile-types": "^1.2.3",
         "typescript": "^5.9.3",
         "vite": "8.0.0-beta.1",
-        "wrangler": "^4.54.0"
+        "wrangler": "^4.57.0"
     }
 }
