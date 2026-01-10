@@ -43,7 +43,7 @@ function watchDirRecursive(dir: string, ignored: string[], onChange: (path?: str
                 }
             });
 
-            onChange(fullPath);
+            if (fullPath.includes('.js') || fullPath.includes('.ts')) onChange(fullPath);
         }
     });
 

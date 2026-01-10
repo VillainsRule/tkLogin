@@ -1,5 +1,7 @@
 import { type ReactNode, useEffect, useState } from 'react'
 
+import { unzip } from 'unzipit'
+
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
@@ -82,18 +84,40 @@ export default function App({ language }: { language: string }) {
         }
     }
 
-    const handleDownload = (inputVersion: string, useWindowOpen?: boolean) => {
+    const handleDownload = async (inputVersion: string, alternativeDownload?: boolean) => {
         const downloadInfo = MAPPED_DOWNLOADS[inputVersion as keyof typeof MAPPED_DOWNLOADS];
         const nightlyLink = `https://nightly.link/${downloadInfo.repo}/workflows/build/${downloadInfo.branch}/${downloadInfo.buildFile}.zip`;
 
-        if (useWindowOpen) {
-            try {
-                window.open(nightlyLink, '_blank');
-            } catch (e) {
-                console.error(e);
-                location.href = nightlyLink;
-            }
-        } else location.href = nightlyLink;
+        if (alternativeDownload) return window.open(nightlyLink, '_blank');
+
+        try {
+            const response = await fetch(`https://cloudflare-cors-anywhere.xov.workers.dev/?` + nightlyLink);
+            if (!response.ok) throw new Error('failed to fetch zip');
+            const arrayBuffer = await response.arrayBuffer();
+
+            const { entries } = await unzip(arrayBuffer);
+            const jarFile = Object.values(entries).find(file => file.name.endsWith('.jar'));
+
+            if (!jarFile) throw new Error('jar not found in zip');
+
+            const jarData = await jarFile.arrayBuffer();
+
+            const blob = new Blob([jarData], { type: 'application/java-archive' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = jarFile.name;
+
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            URL.revokeObjectURL(url);
+        } catch (e) {
+            console.error(e);
+            location.href = nightlyLink;
+        }
     }
 
     const getVersion = () => {
