@@ -1,0 +1,23 @@
+diff --git a/dist/unzipit.module.js b/dist/unzipit.module.js
+index e05cd405e6d65774f78d0adbec05b17720f3ce78..9cac3dccd9f25970ead7224efe5999d224af8d0f 100644
+--- a/dist/unzipit.module.js
++++ b/dist/unzipit.module.js
+@@ -32,7 +32,8 @@ const isNode =
+     (typeof process !== 'undefined') &&
+     process.versions &&
+     (typeof process.versions.node !== 'undefined') &&
+-    (typeof process.versions.electron === 'undefined');
++    (typeof process.versions.electron === 'undefined') &&
++    (typeof Cloudflare === 'undefined');
+ 
+ function isTypedArraySameAsArrayBuffer(typedArray) {
+   return typedArray.byteOffset === 0 && typedArray.byteLength === typedArray.buffer.byteLength;
+@@ -430,7 +431,7 @@ function dynamicRequire(mod, request) {
+ const workerHelper = (function() {
+   if (isNode) {
+     // We need to use `dynamicRequire` because `require` on it's own will be optimized by webpack.
+-    const {Worker} = dynamicRequire(module, 'worker_threads');
++    const {Worker} = dynamicRequire(typeof module !== 'undefined' ? module : null, 'worker_threads');
+     return {
+       async createWorker(url) {
+         return new Worker(url);
