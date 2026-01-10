@@ -15,7 +15,7 @@ import './styles.css';
 type Step = 'version' | 'subversion' | 'download'
 type Version = 'modern' | 'legacy' | null
 
-const LEGACY = { repo: 'VillainsRule/1.8TokenLogin', branch: 'main', buildFile: 'SchubiAuth.jar' };
+const LEGACY = { repo: 'VillainsRule/1.8TokenLogin', branch: 'main', buildFile: '18TokenLogin.jar' };
 const V1_20_5_TO_1_21_5 = { repo: 'VillainsRule/1.21TokenLogin', branch: '1.21.5', buildFile: 'TokenLogin.jar' };
 const V1_21_6_TO_1_21_8 = { repo: 'VillainsRule/1.21TokenLogin', branch: '1.21.8', buildFile: 'TokenLogin.jar' };
 const V1_21_9_PLUS = { repo: 'VillainsRule/1.21TokenLogin', branch: '1.21.10', buildFile: 'TokenLogin.jar' };
